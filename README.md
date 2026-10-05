@@ -22,7 +22,7 @@ Add this entry to `plugins` in `~/.config/opencode/opencode.json(c)`, preserving
 }
 ```
 
-OpenCode installs GitHub packages automatically. This is a GitHub release; an npm registry publication is not required. For a local checkout, replace `package` with its absolute directory.
+OpenCode installs GitHub packages automatically. For a local checkout, replace `package` with its absolute directory.
 
 Connect **OpenAI → Sign in with ChatGPT** in OpenCode. Select a configured model and use OpenCode's normal automatic or manual compaction. No separate login, API key, database, proxy, or tool is added by this plugin.
 

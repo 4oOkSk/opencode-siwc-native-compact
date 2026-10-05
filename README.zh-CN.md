@@ -22,7 +22,7 @@
 }
 ```
 
-OpenCode 会自动安装 GitHub 包，无需 npm 账号。本地开发可把 `package` 改成仓库的绝对路径。
+OpenCode 会自动安装 GitHub 包。本地开发可把 `package` 改成仓库的绝对路径。
 
 在 OpenCode 的 OpenAI 连接中选择 **Sign in with ChatGPT**。使用配置中的模型，按平常方式手动压缩或等待自动压缩即可。插件不添加登录流程、数据库、代理或工具。
 
