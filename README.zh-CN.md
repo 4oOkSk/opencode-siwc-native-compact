@@ -30,7 +30,7 @@ OpenCode 会自动安装 GitHub 包。本地开发可把 `package` 改成仓库�
 
 ## 原理
 
-V2 内置 SIWC 策略是文本摘要；原生路径使用的 `compaction_trigger` 会被 SIWC 拒绝。本插件把压缩请求转换为 `context_management`，阈值为服务端允许的最低值 1000，保留原始 instructions 和历史，并禁用本次请求中的工具调用。
+OpenCode 2.0.22 的内置 SIWC 策略是文本摘要；原生路径使用的 `compaction_trigger` 会被 SIWC 拒绝。本插件把压缩请求转换为 `context_management`，阈值为服务端允许的最低值 1000，保留原始 instructions 和历史，并禁用本次请求中的工具调用。
 
 SIWC 的完成事件可能不含 output，因此从 `response.output_item.done` 收集已完成的项目。只选择**新生成开始前**的最后一个加密 checkpoint，等待 `response.completed` 后交给 V2。调度、近期消息保留、持久化、端点绑定、重放和用量统计仍由 OpenCode 完成。
 
