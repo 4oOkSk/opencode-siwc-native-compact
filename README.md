@@ -15,7 +15,7 @@ Add this entry to `plugins` in `~/.config/opencode/opencode.json(c)`, preserving
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      "package": "github:4oOkSk/opencode-siwc-native-compact#v0.2.0",
+      "package": "github:4oOkSk/opencode-siwc-native-compact#v0.2.1",
       "options": { "models": ["gpt-6-astra-fast"] }
     }
   ]
@@ -46,7 +46,7 @@ OpenCode owns scheduling, retained recent messages, storage, endpoint/model prov
 
 - **V2 only.** Tested against 2.0.22; upstream protocol and hook changes can require an update.
 - **1000-token minimum.** The endpoint rejects lower thresholds. If no pre-generation checkpoint is produced, compaction fails and the original conversation stays available.
-- **Completed responses only.** Truncated, failed, incomplete, changed, or missing checkpoints are rejected.
+- **Completed responses only.** Truncated, failed, incomplete, changed, or missing checkpoints are rejected, including conflicting output in the terminal event. Successful terminal completion cancels the upstream reader without waiting for the HTTP connection to close.
 - **Extra generation.** A normal Responses request may generate output after the checkpoint. That output is discarded from session state, but still contributes to reported usage.
 - **Existing conversations.** OpenCode binds native checkpoints to their provider/model/endpoint. When switching from the old Codex endpoint, V2 re-expands incompatible checkpoints from stored original history. This plugin does not convert old ciphertext or recover missing history.
 - **Other login methods.** Old Codex OAuth, API keys, and custom endpoints keep their existing compaction policy. Switching accounts updates the selected policy.

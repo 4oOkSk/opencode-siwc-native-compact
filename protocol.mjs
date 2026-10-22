@@ -26,13 +26,14 @@ export async function completedResponse(response, { signal } = {}) {
   const output = new Map();
   const remember = (index, item) => {
     if (!Number.isInteger(index) || index < 0 || !item) throw new Error("Invalid output item index");
+    const previous = output.get(index);
+    if (previous && (previous.type === "compaction" || item.type === "compaction") &&
+        (previous.type !== item.type || previous.id !== item.id || previous.encrypted_content !== item.encrypted_content)) {
+      throw new Error("Compaction item changed after completion");
+    }
     if (item.type === "compaction") {
       if (!item.id || typeof item.encrypted_content !== "string" || !item.encrypted_content) {
         throw new Error("Invalid encrypted compaction item");
-      }
-      const previous = output.get(index);
-      if (previous && (previous.id !== item.id || previous.encrypted_content !== item.encrypted_content)) {
-        throw new Error("Compaction item changed after completion");
       }
     }
     output.set(index, item);
@@ -60,7 +61,7 @@ export async function completedResponse(response, { signal } = {}) {
   signal?.addEventListener("abort", abort, { once: true });
   try {
     signal?.throwIfAborted();
-    while (true) {
+    while (!completed) {
       const { done, value } = await reader.read();
       signal?.throwIfAborted();
       if (done) break;

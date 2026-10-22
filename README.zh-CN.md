@@ -15,7 +15,7 @@
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      "package": "github:4oOkSk/opencode-siwc-native-compact#v0.2.0",
+      "package": "github:4oOkSk/opencode-siwc-native-compact#v0.2.1",
       "options": { "models": ["gpt-6-astra-fast"] }
     }
   ]
@@ -38,6 +38,7 @@ SIWC 的完成事件可能不含 output，因此从 `response.output_item.done` 
 
 - 面向 V2，已验证版本为 2.0.22；上游接口变化可能需要更新插件。
 - 不足 1000 token、没有生成前 checkpoint、流中断或失败时不接受压缩结果，原对话保留。
+- 完成事件与已收到的 checkpoint 冲突时拒绝结果；成功完成后取消上游读取，不等待 HTTP 连接关闭。
 - 普通 Responses 请求可能在 checkpoint 后继续生成；这部分不会进入会话状态，但计入用量。
 - 旧 Codex checkpoint 绑定旧端点。切换到 SIWC 时，V2 使用保存的原始历史重新续接；本插件不转换旧密文，也不恢复缺失的历史。
 - 旧 Codex OAuth、API key、自定义端点保持各自原有策略；切换账号会更新匹配状态。

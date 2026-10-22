@@ -259,3 +259,28 @@ test("cancelling a compaction cancels its pending upstream reader", async () => 
   await setImmediate();
   assert(cancelled);
 });
+
+test("successful terminal completion does not wait for the HTTP stream to close", async () => {
+  let cancelled = false;
+  const response = new Response(new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode([done(compactItem("ready"), 0), terminal]
+        .map(event => `data: ${JSON.stringify(event)}\n\n`).join("")));
+    },
+    cancel() { cancelled = true; },
+  }));
+  const result = await checkpointResponse(response, AbortSignal.timeout(1000));
+  assert.deepEqual((await completedResponse(result)).output, [compactItem("ready")]);
+  await setImmediate();
+  assert(cancelled);
+});
+
+test("terminal output cannot replace a completed checkpoint or promote generated output", async () => {
+  const message = { type: "message", id: "generated", content: [] };
+  for (const [first, last] of [[compactItem("one"), message], [message, compactItem("one")]]) {
+    await assert.rejects(checkpointResponse(sse([
+      done(first, 0),
+      { type: "response.completed", response: { ...terminal.response, output: [last] } },
+    ])), /Compaction item changed/);
+  }
+});
