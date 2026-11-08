@@ -4,7 +4,7 @@
 
 Native encrypted context compaction for **OpenCode V2** with the new **Sign in with ChatGPT** connection (`chatgpt-token-sharing`). Uses the public Responses API's `context_management` and OpenCode's own checkpoint persistence and replay.
 
-Tested with **OpenCode 2.0.22** and **`gpt-6-astra-fast`** using a real SIWC account: repeated compaction, continuation with no retained plaintext, and replay after plugin reload. Other models must be opted into and verified separately.
+Tested with **OpenCode 2.0.22** and **`gpt-6-astra-fast`** using a real SIWC account: repeated compaction, continuation after disabling plaintext retention, and replay after plugin reload. Other models must be opted into and verified separately.
 
 ## Install
 
@@ -24,7 +24,7 @@ Add this entry to `plugins` in `~/.config/opencode/opencode.json(c)`, preserving
 
 OpenCode installs GitHub packages automatically. For a local checkout, replace `package` with its absolute directory.
 
-Connect **OpenAI → Sign in with ChatGPT** in OpenCode. Select a configured model and use OpenCode's normal automatic or manual compaction. No separate login, API key, database, proxy, or tool is added by this plugin.
+Connect **OpenAI → Sign in with ChatGPT** in OpenCode. Select a configured model and use OpenCode's normal automatic or manual compaction. The plugin operates through this existing connection and OpenCode's native storage.
 
 `models` contains **OpenCode model IDs**, including aliases such as `gpt-6-astra-fast`. Omitted or empty `models` makes the plugin inactive. It matches only the active SIWC connection, its account-specific model catalog, the OpenAI provider package, and `https://api.openai.com/v1`.
 
@@ -45,16 +45,16 @@ OpenCode owns scheduling, retained recent messages, storage, endpoint/model prov
 ## Behavior and compatibility
 
 - **V2 only.** Tested against 2.0.22; upstream protocol and hook changes can require an update.
-- **1000-token minimum.** The endpoint rejects lower thresholds. If no pre-generation checkpoint is produced, compaction fails and the original conversation stays available.
-- **Completed responses only.** Truncated, failed, incomplete, changed, or missing checkpoints are rejected, including conflicting output in the terminal event. Successful terminal completion cancels the upstream reader without waiting for the HTTP connection to close.
+- **1000-token minimum.** The endpoint rejects lower thresholds. A successful compaction requires a pre-generation checkpoint; failure preserves the original conversation.
+- **Completed responses only.** Truncated, failed, incomplete, changed, or missing checkpoints are rejected, including conflicting output in the terminal event. Successful terminal completion immediately cancels the upstream reader.
 - **Extra generation.** A normal Responses request may generate output after the checkpoint. That output is discarded from session state, but still contributes to reported usage.
-- **Existing conversations.** OpenCode binds native checkpoints to their provider/model/endpoint. When switching from the old Codex endpoint, V2 re-expands incompatible checkpoints from stored original history. This plugin does not convert old ciphertext or recover missing history.
+- **Existing conversations.** OpenCode binds native checkpoints to their provider/model/endpoint. When switching from the old Codex endpoint, V2 re-expands incompatible checkpoints using the original history retained in storage. Continuation requires that original history.
 - **Other login methods.** Old Codex OAuth, API keys, and custom endpoints keep their existing compaction policy. Switching accounts updates the selected policy.
 - **Disable.** Remove the package entry, or append `"-opencode-siwc-native-compact"` to `plugins`. SIWC then uses OpenCode's built-in summary policy; existing checkpoint data remains in OpenCode.
 
 ## Verify
 
-From a checkout, run the offline suite (no dependencies or network requests):
+From a checkout, run the self-contained offline suite:
 
 ```sh
 npm test
@@ -80,7 +80,7 @@ The offline tests cover login/model scoping, account switching, cleanup, alias-t
 - [partment/opencode-openai-compact](https://github.com/partment/opencode-openai-compact): a `compaction_trigger` approach; its README records OpenCode 1.18.23 testing.
 - [josevelaz/opencode-codex-native-compaction](https://github.com/josevelaz/opencode-codex-native-compaction): a V2-beta plugin for the old Codex subscription backend.
 
-These are related projects, not dependencies. This implementation targets the new SIWC public endpoint and reuses V2's native checkpoint storage.
+These projects provide reference implementations. This implementation targets the new SIWC public endpoint and reuses V2's native checkpoint storage.
 
 ## License
 
