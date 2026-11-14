@@ -2,6 +2,15 @@
 
 [English](README.md)
 
+**项目已于 2026-11-14 正式退役归档，停止维护。** 源码、标签和提交历史保留供查阅。
+
+新部署请使用 [OpenCode 官方文档](https://opencode.ai/docs/compaction)中的上下文压缩方案。已有使用者可从 OpenCode 配置的 `plugins` 中移除此包，让压缩策略由 OpenCode 自身管理；保留会话数据库和历史记录。
+
+<details>
+<summary>已退役 v0.2.1 版本的历史文档</summary>
+
+以下安装步骤和兼容性说明仅描述已退役版本，作为历史资料保留。
+
 为 **OpenCode V2＋新版 Sign in with ChatGPT**（`chatgpt-token-sharing`）提供加密原生上下文压缩。使用公开 Responses API 的 `context_management`，由 OpenCode 保存和重放 checkpoint。
 
 ## 安装
@@ -57,3 +66,5 @@ node scripts/probe.mjs --model gpt-6-astra-fast
 调整兼容基线时，另验关闭明文保留区后的续聊，以及插件重载后的 checkpoint 重放。型号、OpenCode 版本及结果保存在验收记录中。
 
 相近项目、完整实现说明见 [英文文档](README.md#related-work)。许可证：MIT。
+
+</details>

@@ -2,6 +2,15 @@
 
 [简体中文](README.zh-CN.md)
 
+**Retired and archived on 2026-11-14.** This project is no longer maintained. The source, tags and history are retained for reference.
+
+For new setups, use the compaction options documented by [OpenCode](https://opencode.ai/docs/compaction). Existing users can remove this package's entry from `plugins` in their OpenCode configuration to return compaction policy to OpenCode; preserve the session database and its history.
+
+<details>
+<summary>Historical documentation for the retired v0.2.1 release</summary>
+
+The instructions and compatibility claims below describe the retired release and are retained as historical reference.
+
 Native encrypted context compaction for **OpenCode V2** with the new **Sign in with ChatGPT** connection (`chatgpt-token-sharing`). Uses the public Responses API's `context_management` and OpenCode's own checkpoint persistence and replay.
 
 ## Install
@@ -85,3 +94,5 @@ These projects provide reference implementations. This implementation targets th
 ## License
 
 MIT.
+
+</details>
