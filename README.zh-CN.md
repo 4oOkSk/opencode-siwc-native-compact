@@ -4,8 +4,6 @@
 
 为 **OpenCode V2＋新版 Sign in with ChatGPT**（`chatgpt-token-sharing`）提供加密原生上下文压缩。使用公开 Responses API 的 `context_management`，由 OpenCode 保存和重放 checkpoint。
 
-已在 **OpenCode 2.0.22、`gpt-6-astra-fast`、真实 SIWC 账号**上验证多轮压缩、关闭明文保留区后的续聊，以及插件重载后的重放。其它模型需要单独选择和验证。
-
 ## 安装
 
 在 `~/.config/opencode/opencode.json(c)` 的 `plugins` 中加入以下项目，保留原有配置：
@@ -36,7 +34,7 @@ SIWC 的完成事件允许 output 为空，因此从 `response.output_item.done`
 
 ## 行为与范围
 
-- 面向 V2，已验证版本为 2.0.22；上游接口变化可能需要更新插件。
+- 兼容基线为 **OpenCode 2.0.22、新版 SIWC 连接、`gpt-6-astra-fast`**。其它模型需要显式启用并验证；上游协议或插件接口变化可能需要更新插件。
 - 阈值至少为 1000 token；成功压缩要求流正常完成并提供生成前 checkpoint。校验失败时保留原对话。
 - 完成事件与已收到的 checkpoint 冲突时拒绝结果；成功完成后立即取消上游读取。
 - 普通 Responses 请求可能在 checkpoint 后继续生成；这部分仅计入用量，会话状态只接受 checkpoint。
@@ -55,5 +53,7 @@ node scripts/probe.mjs --model gpt-6-astra-fast
 ```
 
 探针通过原生 `opencode api` 使用当前账号，发送合成上下文，两轮压缩后验证随机串是否恢复。会消耗账号额度，输出只含脱敏状态和用量；凭据与密文仅保存在内存中。使用指定后台时可添加 `--server <URL>`，沿用该后台的正常认证环境。
+
+调整兼容基线时，另验关闭明文保留区后的续聊，以及插件重载后的 checkpoint 重放。型号、OpenCode 版本及结果保存在验收记录中。
 
 相近项目、完整实现说明见 [英文文档](README.md#related-work)。许可证：MIT。

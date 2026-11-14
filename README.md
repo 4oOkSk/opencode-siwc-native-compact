@@ -4,8 +4,6 @@
 
 Native encrypted context compaction for **OpenCode V2** with the new **Sign in with ChatGPT** connection (`chatgpt-token-sharing`). Uses the public Responses API's `context_management` and OpenCode's own checkpoint persistence and replay.
 
-Tested with **OpenCode 2.0.22** and **`gpt-6-astra-fast`** using a real SIWC account: repeated compaction, continuation after disabling plaintext retention, and replay after plugin reload. Other models must be opted into and verified separately.
-
 ## Install
 
 Add this entry to `plugins` in `~/.config/opencode/opencode.json(c)`, preserving your existing entries:
@@ -44,7 +42,7 @@ OpenCode owns scheduling, retained recent messages, storage, endpoint/model prov
 
 ## Behavior and compatibility
 
-- **V2 only.** Tested against 2.0.22; upstream protocol and hook changes can require an update.
+- **Compatibility baseline:** OpenCode **2.0.22**, the new SIWC connection and **`gpt-6-astra-fast`**. Other models require explicit opt-in and verification; upstream protocol and hook changes can require an update.
 - **1000-token minimum.** The endpoint rejects lower thresholds. A successful compaction requires a pre-generation checkpoint; failure preserves the original conversation.
 - **Completed responses only.** Truncated, failed, incomplete, changed, or missing checkpoints are rejected, including conflicting output in the terminal event. Successful terminal completion immediately cancels the upstream reader.
 - **Extra generation.** A normal Responses request may generate output after the checkpoint. That output is discarded from session state, but still contributes to reported usage.
@@ -69,6 +67,8 @@ node scripts/probe.mjs --model gpt-6-astra-fast --server http://127.0.0.1:4096
 ```
 
 The live probe sends synthetic context, performs two compaction/replay rounds, and verifies a random token using the encrypted checkpoint. It consumes account quota. Credentials and checkpoint contents remain in memory; results contain status and usage only.
+
+When changing the compatibility baseline, also check continuation with plaintext retention disabled and checkpoint replay after plugin reload. Keep the model, OpenCode version and results with the verification record.
 
 The offline tests cover login/model scoping, account switching, cleanup, alias-to-wire-model mapping, SSE item collection, pre-generation checkpoint selection, terminal failures, and cancellation.
 
